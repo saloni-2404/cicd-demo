@@ -11,6 +11,7 @@ on:
 jobs:
   build-test-push:
     runs-on: ubuntu-latest
+    environment: dev
 
     steps:
       - name: Checkout source code
