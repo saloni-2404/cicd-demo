@@ -16,13 +16,20 @@ pipeline {
 
         stage('Install dependencies') {
             steps {
-                sh 'pip install -r requirements.txt || true'
+                sh '''
+                    python3 --version
+                    python3 -m pip --version
+                    python3 -m pip install --upgrade pip
+                    python3 -m pip install pytest
+                '''
             }
         }
 
         stage('Run tests') {
             steps {
-                sh 'pytest || true'
+                sh '''
+                    python3 -m pytest
+                '''
             }
         }
     }
