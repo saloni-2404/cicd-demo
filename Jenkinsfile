@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.11-slim'
+            args '-u root'
+        }
+    }
 
     stages {
         stage('Checkout') {
@@ -14,13 +19,26 @@ pipeline {
             }
         }
 
+        stage('Check Python') {
+            steps {
+                sh '''
+                    python --version
+                    pip --version
+                '''
+            }
+        }
+
         stage('Install dependencies') {
             steps {
                 sh '''
-                    python3 --version
-                    python3 -m pip --version
-                    python3 -m pip install --upgrade pip
-                    python3 -m pip install pytest
+                    pip install --upgrade pip
+                    pip install pytest
+
+                    if [ -f requirements.txt ]; then
+                        pip install -r requirements.txt
+                    else
+                        echo "No requirements.txt found"
+                    fi
                 '''
             }
         }
@@ -28,7 +46,7 @@ pipeline {
         stage('Run tests') {
             steps {
                 sh '''
-                    python3 -m pytest
+                    pytest -v
                 '''
             }
         }
